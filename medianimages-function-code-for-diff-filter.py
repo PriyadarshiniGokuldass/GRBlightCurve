@@ -28,7 +28,7 @@ def convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, F
  #to get the normalized image of the median flat images.           
     if(shouldNormalize):   
             Flat = np.median(raw_image_data)
-            reshaped_median = raw_image_data/Flat  #normalised data; variable name is for convenience
+            reshaped_image = raw_image_data/Flat  #normalised data; variable name is for convenience
 
  #to get median image for bias and flat.     
  #Vertical stack gets each array into a one by one row, fal.reshape(1,24) => puts all the 24 values in 1 row. 
@@ -39,10 +39,10 @@ def convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, F
 #calculating median using numpy and reshaping back to original pixel size.
 #multiplied by reshape to get the output image in original pixel size.              
            
-            reshaped_median = np.median(image_data, axis=0).reshape(1022, 1023)    #gets the median of the image and then reshapes it in the given dimensions to ge the output image.     
-            header['HISTORY']='= ' + comment_history                            #adds the history comment to the header of the final image.
-            fits.writeto(opPath + opFileName + '.fits', reshaped_median, header, checksum=True) #path to store o/p file.
-    return reshaped_median  #returns o/p
+            reshaped_image = np.median(image_data, axis=0).reshape(1022, 1023)    #gets the median of the image and then reshapes it in the given dimensions to ge the output image.     
+    header['HISTORY']='= ' + comment_history                            #adds the history comment to the header of the final image.
+    fits.writeto(opPath + opFileName + '.fits', reshaped_image, header, checksum=True) #path to store o/p file.
+    return reshaped_image  #returns o/p
 
 #Assigning the path to get input cropped image. 
 #Specify which filter you want to work with.
