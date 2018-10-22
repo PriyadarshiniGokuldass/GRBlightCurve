@@ -28,7 +28,7 @@ def convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, F
  #to get the normalized image of the median flat images.           
     if(shouldNormalize):   
             Flat = np.median(raw_image_data)
-            reshaped_image = raw_image_data/Flat  #normalised data; variable name is for convenience
+            reshaped_image = (raw_image_data/Flat).reshape(1022, 1023)  #normalised data; variable name is for convenience
 
  #to get median image for bias and flat.     
  #Vertical stack gets each array into a one by one row, fal.reshape(1,24) => puts all the 24 values in 1 row. 
@@ -49,41 +49,41 @@ def convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, F
 #to bias medain image.
 
 biasFilter = 'I'
-ipPath = 'D:/archiveunziped/ipopfiles/croppedbias/cb(10.05.18)/b'
+ipPath = 'D:/archiveunziped/ipopfiles/croppedbias/cb(18.06.14)/b'
 noOfFiles = 10
 comment_history = ' This is a median stack of 10 bias files information'
-opPath = 'D:/archiveunziped/ipopfiles/finalop/op(10.05.19)/'
+opPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/'
 opFileName = 'biasmedian'
 
 medianbiasOp = convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, biasFilter) #calling the function
 
 #to get flat median image.
 flatFilter = 'V'
-ipPath = 'D:/archiveunziped/ipopfiles/croppedflats/cf(10.05.18)/f'
+ipPath = 'D:/archiveunziped/ipopfiles/croppedflats/cf(18.06.14)/f'
 noOfFiles = 3
 comment_history = 'This is a median stack of 3 flat files information'
-opPath = 'D:/archiveunziped/ipopfiles/finalop/op(10.05.19)/'
+opPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/'
 opFileName = 'flatmedian1'
 
 medianflatOp = convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, flatFilter ) #calling the function
 
 #to get flat normalized image.
 medianFlatFilter = 'V'
-ipPath = 'D:/archiveunziped/ipopfiles/finalop/op(10.05.19)/flatmedian'
+ipPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/flatmedian'
 noOfFiles = 1
 comment_history = ' It contains median stack of 3 flat files information'
-opPath = 'D:/archiveunziped/ipopfiles/finalop/op(10.05.19)/'
+opPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/'
 opFileName = 'normalizedflat'
 
 normalizeflat = convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, medianFlatFilter ,shouldNormalize = True) #calling the function
 
 # To create final science image.
 for i in range(3):
-    image_sci = get_pkg_data_filename('D:/archiveunziped/ipopfiles/croppedscience/cs(10.05.18)/s'+str(i+1)+'.fits') 
+    image_sci = get_pkg_data_filename('D:/archiveunziped/ipopfiles/croppedscience/cs(18.06.14)/s'+str(i+1)+'.fits')
     image_scidata,header = fits.getdata(image_sci, header = True, ext =0,cobbler=True) 
     if (header['FILTER'] == medianFlatFilter):       #filter check 
         finalscience = (image_scidata - medianbiasOp)/normalizeflat   #getting the final science image.
         header['HISTORY']='= This final science image contains information of 10 bias and 3 flat images.'
-        fits.writeto('D:/archiveunziped/ipopfiles/finalop/op(10.05.19)/finalscience'+str(i+1)+'.fits',finalscience,header,checksum=True) #path to store the output image.
+        fits.writeto('D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/finalscience'+str(i+1)+'.fits',finalscience,header,checksum=True) #path to store the output image.
         
 #hurray! end of code!!:)        
