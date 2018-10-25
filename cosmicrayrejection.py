@@ -15,13 +15,13 @@ image_sci, header = fits.getdata(image_sci, header=True, ext=0, cobbler=True)
 # gain and read out noise depends on the detector. So enter the appropriate value.
 
 data = CCDData(image_sci, unit='adu')
-data_with_deviation = ccdproc.create_deviation(data, gain=2.6 * u.electron/u.adu, readnoise= 15* u.electron)
+# data_with_deviation = ccdproc.create_deviation(data, gain=2.6 * u.electron/u.adu, readnoise= 15* u.electron)
 
-gain_corrected = ccdproc.gain_correct(data_with_deviation, 2.6*u.electron/u.adu)
+# gain_corrected = ccdproc.gain_correct(data_with_deviation, 2.6*u.electron/u.adu)
 
 # cleaning the image and removing the cosmic ray using lacosmic
 
-cr_cleaned = ccdproc.cosmicray_lacosmic(gain_corrected, sigclip=5)
+cr_cleaned = ccdproc.cosmicray_lacosmic(data, sigclip=5)
 
 # saving the output fits image.
 fits.writeto('/media/sf_VB_shared_files/archiveunziped/ipopfiles/finalop/cosrayfinalsciopla_gaincorrected.fits', np.array(cr_cleaned), header, checksum=True)
