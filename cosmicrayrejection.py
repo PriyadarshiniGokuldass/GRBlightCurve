@@ -24,7 +24,7 @@ data = CCDData(image_sci, unit='adu')
 cr_cleaned = ccdproc.cosmicray_lacosmic(data, sigclip=5)
 
 # saving the output fits image.
-fits.writeto('/media/sf_VB_shared_files/archiveunziped/ipopfiles/finalop/cosrayfinalsciopla_gaincorrected.fits', np.array(cr_cleaned), header, checksum=True)
+fits.writeto('/media/sf_VB_shared_files/archiveunziped/ipopfiles/finalop/cosrayfinalsciopla_sigclip5.fits', np.array(cr_cleaned), header, checksum=True)
 
 # hooray!! end of code!! :)
 
