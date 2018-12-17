@@ -6,19 +6,19 @@ import matplotlib.pyplot as plt
 from astropy.utils.data import get_pkg_data_filename
 from astropy.io import fits
 import numpy as np
+import glob, sys, os   
 
 #function to get the median image for set of bias and flat images and to get normalized flat image.
 
-def convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, Filter, shouldNormalize = False):
+def convert2medianwithop(ipPath, comment_history,opPath,opFileName, Filter, shouldNormalize = False):
     
 #str is used to convert number to string since the input data is named in numbers, (i+1) because i start from 0 not 1.   
    
-    raw_image_files = [get_pkg_data_filename( ipPath +str(i+1)+'.fits') for i in range(noOfFiles)] 
     raw_image_data = []
-    
+    raw_image_files = glob.glob(ipPath + '\*.fits') #a global path is defined here. all the images in this folder will get processed. 
     for raw_image_file in raw_image_files:
 #cobbler and checksum is used to tell the python to ignore any header data are that not standard and create the output image. 
-           image_data,header= fits.getdata(raw_image_files[0],header=True,ext=0, clobber=True)
+           image_data,header= fits.getdata(raw_image_file,header=True,ext=0, clobber=True)
         #print(header['FILTER'])    #prints the image filter name
         
 #checking whether all the images are from same filter.        
@@ -48,42 +48,42 @@ def convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, F
 #Specify which filter you want to work with.
 #to bias medain image.
 
+basedir = r'C:\\Users\\Ria\\VB shared files\\archiveunziped\\raw_processed_data_folder\\GRB180614A\\2018-08-27\\'
+
+ipPath = basedir + 'cropped_files\Cropped_bias'
+opPath = basedir + 'Output_files\\bias'
 biasFilter = 'I'
-ipPath = 'D:/archiveunziped/ipopfiles/croppedbias/cb(18.06.14)/b'
-noOfFiles = 10
 comment_history = ' This is a median stack of 10 bias files information'
-opPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/'
 opFileName = 'biasmedian'
 
-medianbiasOp = convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, biasFilter) #calling the function
+medianbiasOp = convert2medianwithop(ipPath, comment_history,opPath,opFileName, biasFilter) #calling the function
 
 #to get flat median image.
+ipPath = basedir + 'cropped_files\Cropped_flat'
+opPath = basedir + 'Output_files\\flat'
 flatFilter = 'V'
-ipPath = 'D:/archiveunziped/ipopfiles/croppedflats/cf(18.06.14)/f'
-noOfFiles = 3
 comment_history = 'This is a median stack of 3 flat files information'
-opPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/'
 opFileName = 'flatmedian1'
 
-medianflatOp = convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, flatFilter ) #calling the function
+medianflatOp = convert2medianwithop(ipPath, comment_history,opPath,opFileName, flatFilter ) #calling the function
 
 #to get flat normalized image.
+ipPath = basedir + 'Output_files\\flat'
+opPath = basedir + 'Output_files\\Normalized_flat'
 medianFlatFilter = 'V'
-ipPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/flatmedian'
-noOfFiles = 1
 comment_history = ' It contains median stack of 3 flat files information'
-opPath = 'D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/'
 opFileName = 'normalizedflat'
 
-normalizeflat = convert2medianwithop(ipPath, noOfFiles, comment_history,opPath,opFileName, medianFlatFilter ,shouldNormalize = True) #calling the function
+normalizeflat = convert2medianwithop(ipPath, comment_history,opPath,opFileName, medianFlatFilter ,shouldNormalize = True) #calling the function
 
 # To create final science image.
-for i in range(3):
-    image_sci = get_pkg_data_filename('D:/archiveunziped/ipopfiles/croppedscience/cs(18.06.14)/s'+str(i+1)+'.fits')
-    image_scidata,header = fits.getdata(image_sci, header = True, ext =0,cobbler=True) 
+sci_images = glob.glob( basedir+ 'cropped_files\\Cropped_science\\*.fits')
+
+for sci_image in sci_images:
+    image_sci_data,header = fits.getdata(sci_image, header = True, ext =0,cobbler=True) 
     if (header['FILTER'] == medianFlatFilter):       #filter check 
-        finalscience = (image_scidata - medianbiasOp)/normalizeflat   #getting the final science image.
+        finalscience = (image_sci_data - medianbiasOp)/normalizeflat   #getting the final science image.
         header['HISTORY']='= This final science image contains information of 10 bias and 3 flat images.'
-        fits.writeto('D:/archiveunziped/ipopfiles/finalop/op(18.06.14)/finalscience'+str(i+1)+'.fits',finalscience,header,checksum=True) #path to store the output image.
+        fits.writeto(basedir + 'Output_files\\science'+ os.path.basename(sci_image),finalscience,header,checksum=True) #path to store the output image.
         
 #hurray! end of code!!:)        
