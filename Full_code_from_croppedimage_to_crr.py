@@ -94,9 +94,9 @@ def convert2medianwithop(ipPath, comment_history,opPath,opFileName, Filter, shou
            
             reshaped_image = np.median(image_data, axis=0).reshape(1022, 1023)    #gets the median of the image and then reshapes it in the given dimensions to ge the output image.     
     header['HISTORY']='= ' + comment_history                            #adds the history comment to the header of the final image.
-    fits.writeto(opPath + opFileName + '.fits', reshaped_image, header, checksum=True) #path to store o/p file.
+    fits.writeto(opPath + opFileName +"_"+header["FILTER"]+"_"+ '.fits', reshaped_image, header, checksum=True) #path to store o/p file.
     return reshaped_image  #returns o/p
-
+    
 #Assigning the path to get input cropped image. 
 #Specify which filter you want to work with.
 #to bias medain image.
@@ -116,7 +116,7 @@ ipPath = basedir + 'cropped_files\Cropped_flat'
 opPath = basedir + 'Output_files\\flat\\'
 flatFilter = 'R'
 comment_history = 'This is a median stack of 3 flat files information'
-opFileName = 'flatmedian1'
+opFileName = 'flatmedian'
 
 medianflatOp = convert2medianwithop(ipPath, comment_history,opPath,opFileName, flatFilter ) #calling the function
 
