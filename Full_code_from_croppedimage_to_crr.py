@@ -165,6 +165,3 @@ for crr_image in crr_images:
 
 # hooray!! end of code!! :)
 
-fits.writeto(opPath + "\cropped" + "_"+header["FILTER"]+"_"+os.path.basename(ip_file),croppednewimage , header, checksum=True)
-                
-#hurray! end of code!!:)
