@@ -60,7 +60,7 @@ if True:    #if condition written to run the cropped image part only once, (no n
         croppedscienceimages= croppedimage(ipPath, opPath) #Calling the function for getting cropped science images.
 
 
-def convert2medianwithop(ipPath, comment_history,opPath,opFileName, Filter, shouldNormalize = False):
+def convert2medianwithop(ipPath, comment_history,opPath,opFileName, Filter, shouldNormalize = False, shouldwritefile=True):
     
 #str is used to convert number to string since the input data is named in numbers, (i+1) because i start from 0 not 1.   
    
@@ -109,7 +109,8 @@ biasFilter = 'I'
 comment_history = ' This is a median stack of 10 bias files information'
 opFileName = 'biasmedian'
 
-medianbiasOp = convert2medianwithop(ipPath, comment_history,opPath,opFileName, biasFilter) #calling the function
+medianbiasOp = convert2medianwithop(ipPath, comment_history,opPath,opFileName, biasFilter,shouldwritefile= True) #calling the function
+#shouldwritefiles = false is used to not save the output bias image each time when code is run for different filters. Make it Ture to run first time.
 
 #to get flat median image.
 ipPath = basedir + 'cropped_files\Cropped_flat'
@@ -157,11 +158,11 @@ for crr_image in crr_images:
 # gain_corrected = ccdproc.gain_correct(data_with_deviation, 2.6*u.electron/u.adu) #not needed for this work.
 
 # cleaning the image and removing the cosmic ray using lacosmic
-
-    cr_cleaned = ccdproc.cosmicray_lacosmic(data,sigclip=5,gain=2.6,readnoise=15,niter=4,cleantype="medmask",psfsize=5)
+    if (header['FILTER'] == medianFlatFilter): #to process the images with only specific filter name.    
+         cr_cleaned = ccdproc.cosmicray_lacosmic(data,sigclip=5,gain=2.6,readnoise=15,niter=4,cleantype="medmask",psfsize=5)
 
 # saving the output fits image.
-    fits.writeto(basedir + 'Output_files\\cosmic_ray_removed_science\\'+"\crr_"+ os.path.basename(crr_image), np.array(cr_cleaned), header, checksum=True)
+        fits.writeto(basedir + 'Output_files\\cosmic_ray_removed_science\\'+"\crr_"+ os.path.basename(crr_image), np.array(cr_cleaned), header, checksum=True)
 
 # hooray!! end of code!! :)
 
