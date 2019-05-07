@@ -12,7 +12,8 @@ from photutils import DAOStarFinder
 import sys
 
 #Getting input image
-ipPath = r'C:\\Users\\Ria\\VB shared files\\archiveunziped\\raw_processed_data_folder\\GRB180224A\\2018-02-25\\combinedimages\summed_R_files.fits'
+
+ipPath = r'.\GRB180224A-WCS\GRB180224A\2018-02-25\combinedimages\summed_R_files.fits'
 raw_image_files = get_pkg_data_filename( ipPath)  # getting the images from the input file.
 raw_imagedata,header= fits.getdata(raw_image_files,header=True,ext=0, clobber=True)       # getting image info and header info of one image.    
 # print(raw_image_data.shape)
@@ -20,7 +21,7 @@ raw_imagedata,header= fits.getdata(raw_image_files,header=True,ext=0, clobber=Tr
 data = raw_imagedata[0:1022,0:1023]    #Getting the data in an array.
 mean, median, std = sigma_clipped_stats(data, sigma=3.0) #Getting the mean, median and std of the input image.   
 print((mean, median, std)) 
-daofind = DAOStarFinder(fwhm=3.0, threshold=3.*std)    # threshold = 3 => 3 sigma values as upper limit.
+daofind = DAOStarFinder(fwhm=3.0, threshold=3.*std, sky = std)    # threshold = 3 => 3 sigma values as upper limit.
 sources = daofind(data - median)  #Gives the required data.  
 for col in sources.colnames:    
     sources[col].info.format = '%.8g'  # for consistent table output, gives data upto 8 decimal places.
