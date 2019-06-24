@@ -30,7 +30,7 @@ def croppedimage(ip_files,opPath):
                 raw_image_data, header= fits.getdata(ip_file,header=True,ext=0, clobber=True)       # getting image info and header info of one image.
         
                 fileName = os.path.basename(ip_file)
-                header['OBJ_NAME'] = fileName.split('.')[0]   #Adding the name of the object in the header of each image.    
+                header['OBJ_NAME'] = fileName.split('_')[0]   #Adding the name of the object in the header of each image.    
 
                 #xmin and xmax crops the top and bottom of the image while ymin and ymax crops the left and right side of the image.
                 croppednewimage = raw_image_data[1:-1,1:-1] #cropping parameter. [xmin:-xmax,ymin:-ymax] and (minus symbol - thats what the equation says!)
